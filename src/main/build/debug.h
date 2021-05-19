@@ -97,6 +97,7 @@ typedef enum {
     DEBUG_SMART_SMOOTHING,
     DEBUG_ANGLE,
     DEBUG_HORIZON,
+    DEBUG_MIXER,
     DEBUG_COUNT
 } debugType_e;
 

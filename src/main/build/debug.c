@@ -78,5 +78,6 @@ const char * const debugModeNames[DEBUG_COUNT] = {
     "KALMAN",
     "SMART_SMOOTHING",
     "ANGLE",
-    "HORIZON"
+    "HORIZON",
+    "MIXER",
 };
