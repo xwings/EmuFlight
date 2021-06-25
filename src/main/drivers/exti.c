@@ -117,7 +117,7 @@ void EXTIConfig(IO_t io, extiCallbackRec_t *cb, int irqPriority, ioConfig_t conf
 }
 #else
 
-void EXTIConfig(IO_t io, extiCallbackRec_t *cb, int irqPriority, EXTITrigger_TypeDef trigger) {
+void EXTIConfig(IO_t io, extiCallbackRec_t *cb, int irqPriority, extiTrigger_t trigger) {
     int chIdx;
     chIdx = IO_GPIOPinIdx(io);
     if (chIdx < 0)

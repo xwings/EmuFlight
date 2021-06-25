@@ -128,7 +128,18 @@ typedef uint8_t (*rcFrameStatusFnPtr)(struct rxRuntimeConfig_s *rxRuntimeConfig)
 typedef bool (*rcProcessFrameFnPtr)(const struct rxRuntimeConfig_s *rxRuntimeConfig);
 typedef timeUs_t rcGetFrameTimeUsFn(void);  // used to retrieve the timestamp in microseconds for the last channe     l data frame
 
+typedef enum {
+    RX_PROVIDER_NONE = 0,
+    RX_PROVIDER_PARALLEL_PWM,
+    RX_PROVIDER_PPM,
+    RX_PROVIDER_SERIAL,
+    RX_PROVIDER_MSP,
+    RX_PROVIDER_SPI,
+} rxProvider_t;
+
 typedef struct rxRuntimeConfig_s {
+    rxProvider_t        rxProvider;
+    SerialRXType        serialrxProvider;
     uint8_t             channelCount; // number of RC channels as reported by current input driver
     uint16_t            rxRefreshRate;
     rcReadRawDataFnPtr  rcReadRawFn;
@@ -138,6 +149,27 @@ typedef struct rxRuntimeConfig_s {
     uint16_t            *channelData;
     void                *frameData;
 } rxRuntimeConfig_t;
+
+typedef enum {
+    LQ_SOURCE_NONE = 0,
+    LQ_SOURCE_RX_PROTOCOL_CRSF,
+    LQ_SOURCE_RX_PROTOCOL_GHST,
+} linkQualitySource_e;
+
+extern linkQualitySource_e linkQualitySource;
+
+// typedef struct rxRuntimeState_s {
+//     rxProvider_t        rxProvider;
+//     SerialRXType        serialrxProvider;
+//     uint8_t             channelCount; // number of RC channels as reported by current input driver
+//     uint16_t            rxRefreshRate;
+//     rcReadRawDataFnPtr  rcReadRawFn;
+//     rcFrameStatusFnPtr  rcFrameStatusFn;
+//     rcProcessFrameFnPtr rcProcessFrameFn;
+//     rcGetFrameTimeUsFn *rcFrameTimeUsFn;
+//     uint16_t            *channelData;
+//     void                *frameData;
+// } rxRuntimeState_t;
 
 typedef enum {
     RSSI_SOURCE_NONE = 0,

@@ -224,3 +224,76 @@
 #ifndef BINDPLUG_PIN
 #define BINDPLUG_PIN NONE
 #endif
+
+// Extracted from rx/rx.c and rx/rx.h
+
+#define RX_MAPPABLE_CHANNEL_COUNT 8
+
+#ifndef RX_SPI_DEFAULT_PROTOCOL
+#define RX_SPI_DEFAULT_PROTOCOL 0
+#endif
+#ifndef SERIALRX_PROVIDER
+#define SERIALRX_PROVIDER 0
+#endif
+
+#define RX_MIN_USEC 885
+#define RX_MAX_USEC 2115
+#define RX_MID_USEC 1500
+
+#ifndef SPEKTRUM_BIND_PIN
+#define SPEKTRUM_BIND_PIN NONE
+#endif
+
+#ifndef BINDPLUG_PIN
+#define BINDPLUG_PIN NONE
+#endif
+
+// Extracted from rx/rx.c and rx/rx.h
+
+#ifdef USE_RX_SPI
+#if !defined(RX_SPI_INSTANCE)
+#define RX_SPI_INSTANCE NULL
+#endif
+
+#if !defined(RX_NSS_PIN)
+#define RX_NSS_PIN NONE
+#endif
+
+#ifndef RX_SPI_LED_PIN
+#define RX_SPI_LED_PIN NONE
+#endif
+
+#if !defined(RX_SPI_EXTI_PIN)
+#define RX_SPI_EXTI_PIN NONE
+#endif
+
+#if !defined(RX_SPI_BIND_PIN)
+#define RX_SPI_BIND_PIN NONE
+#endif
+
+#if defined(USE_RX_CC2500)
+#if !defined(RX_CC2500_SPI_TX_EN_PIN)
+#define RX_CC2500_SPI_TX_EN_PIN NONE
+#endif
+
+#if !defined(RX_CC2500_SPI_LNA_EN_PIN)
+#define RX_CC2500_SPI_LNA_EN_PIN NONE
+#endif
+
+#if !defined(RX_CC2500_SPI_ANT_SEL_PIN)
+#define RX_CC2500_SPI_ANT_SEL_PIN NONE
+#endif
+#endif
+
+#if defined(USE_RX_EXPRESSLRS)
+#if !defined(RX_EXPRESSLRS_SPI_RESET_PIN)
+#define RX_EXPRESSLRS_SPI_RESET_PIN NONE
+#endif
+
+#if !defined(RX_EXPRESSLRS_SPI_BUSY_PIN)
+#define RX_EXPRESSLRS_SPI_BUSY_PIN NONE
+#endif
+
+#endif
+
+#endif

@@ -36,6 +36,8 @@
 #include "drivers/io_impl.h"
 #include "drivers/rcc.h"
 #include "drivers/system.h"
+#include "drivers/time.h"
+#include "drivers/nvic.h"
 
 #include "pg/rx_spi.h"
 
@@ -43,6 +45,13 @@
 
 static busDevice_t rxSpiDevice;
 static busDevice_t *busdev = &rxSpiDevice;
+
+static IO_t extiPin = IO_NONE;
+static extiCallbackRec_t rxSpiExtiCallbackRec;
+static bool extiLevel = true;
+
+static volatile bool extiHasOccurred = false;
+static volatile timeUs_t lastExtiTimeUs = 0;
 
 #define DISABLE_RX()    {IOHi(busdev->busdev_u.spi.csnPin);}
 #define ENABLE_RX()     {IOLo(busdev->busdev_u.spi.csnPin);}
@@ -59,6 +68,18 @@ bool rxSpiDeviceInit(const rxSpiConfig_t *rxSpiConfig) {
     DISABLE_RX();
     spiSetDivisor(busdev->busdev_u.spi.instance, SPI_CLOCK_STANDARD);
     return true;
+}
+
+void rxSpiExtiHandler(extiCallbackRec_t* callback)
+{
+    UNUSED(callback);
+
+    const timeUs_t extiTimeUs = microsISR();
+
+    if (IORead(extiPin) == extiLevel) {
+        lastExtiTimeUs = extiTimeUs;
+        extiHasOccurred = true;
+    }
 }
 
 uint8_t rxSpiTransferByte(uint8_t data) {
@@ -106,5 +127,50 @@ uint8_t rxSpiReadCommandMulti(uint8_t command, uint8_t commandData, uint8_t *ret
     }
     DISABLE_RX();
     return ret;
+}
+
+void rxSpiExtiInit(ioConfig_t rxSpiExtiPinConfig, extiTrigger_t rxSpiExtiPinTrigger)
+{
+    if (extiPin) {
+        if (rxSpiExtiPinTrigger == BETAFLIGHT_EXTI_TRIGGER_FALLING) {
+            extiLevel = false;
+        }
+        EXTIHandlerInit(&rxSpiExtiCallbackRec, rxSpiExtiHandler);
+        EXTIConfig(extiPin, &rxSpiExtiCallbackRec, NVIC_PRIO_MPU_INT_EXTI, rxSpiExtiPinTrigger);
+        EXTIEnable(extiPin, true);
+    }
+}
+
+bool rxSpiExtiConfigured(void)
+{
+    return extiPin != IO_NONE;
+}
+
+
+bool rxSpiGetExtiState(void)
+{
+    return IORead(extiPin);
+}
+
+bool rxSpiPollExti(void)
+{
+    return extiHasOccurred;
+}
+
+void rxSpiResetExti(void)
+{
+    extiHasOccurred = false;
+}
+
+timeUs_t rxSpiGetLastExtiTimeUs(void)
+{
+    return lastExtiTimeUs;
+}
+
+void rxSpiTransferCommandMulti(uint8_t *data, uint8_t length)
+{
+    ENABLE_RX();
+    spiBusRawTransfer(busdev, data, data, length);
+    DISABLE_RX();
 }
 #endif

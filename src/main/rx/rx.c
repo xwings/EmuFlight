@@ -69,6 +69,8 @@
 #include "rx/rx_spi.h"
 #include "rx/targetcustomserial.h"
 
+#include "rx/expresslrs.h"
+
 
 const char rcChannelLetters[] = "AERT12345678abcdefgh";
 

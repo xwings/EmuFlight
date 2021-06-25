@@ -83,6 +83,7 @@
 #include "pg/usb.h"
 #include "pg/sdio.h"
 #include "pg/rcdevice.h"
+#include "pg/rx_spi_expresslrs.h"
 
 #include "rx/rx.h"
 #include "rx/cc2500_frsky_common.h"
@@ -239,7 +240,8 @@ static const char * const lookupTableRxSpi[] = {
     "FLYSKY",
     "FLYSKY_2A",
     "KN",
-    "SFHSS"
+    "SFHSS",
+    "EXPRESSLRS",
 };
 #endif
 
@@ -378,6 +380,20 @@ static const char *const lookupTableMixerImplType[] = {
     "LEGACY", "SMOOTH", "2PASS"
 };
 
+#ifdef USE_RX_EXPRESSLRS
+static const char* const lookupTableFreqDomain[] = {
+#ifdef USE_RX_SX127X
+    "AU433", "AU915", "EU433", "EU868", "FCC915",
+#endif
+#ifdef USE_RX_SX1280
+    "ISM2400",
+#endif
+#if !defined(USE_RX_SX127X) && !defined(USE_RX_SX1280)
+    "NONE",
+#endif
+};
+#endif
+
 #define LOOKUP_TABLE_ENTRY(name) { name, ARRAYLEN(name) }
 
 const lookupTableEntry_t lookupTables[] = {
@@ -464,6 +480,9 @@ const lookupTableEntry_t lookupTables[] = {
     LOOKUP_TABLE_ENTRY(lookupTableThrottleVbatCompType),
 #ifdef USE_OSD
     LOOKUP_TABLE_ENTRY(lookupTableOsdLogoOnArming),
+#endif
+#ifdef USE_RX_EXPRESSLRS
+    LOOKUP_TABLE_ENTRY(lookupTableFreqDomain),
 #endif
     LOOKUP_TABLE_ENTRY(lookupTableMixerImplType),
 };
@@ -1168,6 +1187,13 @@ const clivalue_t valueTable[] = {
     { "dashboard_i2c_addr",          VAR_UINT8  | MASTER_VALUE, .config.minmax = { I2C_ADDR7_MIN, I2C_ADDR7_MAX }, PG_DASHBOARD_CONFIG, offsetof(dashboardConfig_t, address) },
 #endif
 
+#ifdef USE_RX_EXPRESSLRS
+    { "expresslrs_uid",             VAR_UINT8 | MASTER_VALUE | MODE_ARRAY, .config.array.length = 6, PG_RX_EXPRESSLRS_SPI_CONFIG, offsetof(rxExpressLrsSpiConfig_t, UID) },
+    { "expresslrs_domain",          VAR_UINT8 | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_FREQ_DOMAIN }, PG_RX_EXPRESSLRS_SPI_CONFIG, offsetof(rxExpressLrsSpiConfig_t, domain) },
+    { "expresslrs_rate_index",      VAR_UINT8 | MASTER_VALUE, .config.minmax = { 0, 3 }, PG_RX_EXPRESSLRS_SPI_CONFIG, offsetof(rxExpressLrsSpiConfig_t, rateIndex) },
+    { "expresslrs_hybrid_switches", VAR_UINT8 | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_OFF_ON }, PG_RX_EXPRESSLRS_SPI_CONFIG, offsetof(rxExpressLrsSpiConfig_t, hybridSwitches) },
+#endif
+
 // PG_CAMERA_CONTROL_CONFIG
 #ifdef USE_CAMERA_CONTROL
     { "camera_control_mode", VAR_UINT8 | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_CAMERA_CONTROL_MODE }, PG_CAMERA_CONTROL_CONFIG, offsetof(cameraControlConfig_t, mode) },
@@ -1206,6 +1232,8 @@ const clivalue_t valueTable[] = {
     { "rcdevice_init_dev_attempts", VAR_UINT8 | MASTER_VALUE, .config.minmax = { 0, 10 }, PG_RCDEVICE_CONFIG, offsetof(rcdeviceConfig_t, initDeviceAttempts) },
     { "rcdevice_init_dev_attempt_interval", VAR_UINT32 | MASTER_VALUE, .config.minmax = { 500, 5000 }, PG_RCDEVICE_CONFIG, offsetof(rcdeviceConfig_t, initDeviceAttemptInterval) }
 #endif
+// PG_GYRO_DEVICE_CONFIG
+
 };
 
 const uint16_t valueTableEntryCount = ARRAYLEN(valueTable);

@@ -96,6 +96,7 @@ typedef enum {
     DEBUG_KALMAN,
     DEBUG_ANGLE,
     DEBUG_HORIZON,
+    DEBUG_RX_EXPRESSLRS_SPI,
     DEBUG_COUNT
 } debugType_e;
 

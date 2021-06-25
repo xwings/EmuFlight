@@ -97,6 +97,7 @@
 #if defined(CRAZYBEEF4FS)
 #define USE_LED_STRIP
 #define USE_RX_SPI
+#define USE_RX_BIND
 #define USE_RX_FLYSKY
 #define RX_CHANNELS_AETR
 #define DEFAULT_RX_FEATURE      FEATURE_RX_SPI
@@ -129,6 +130,30 @@
 #define DEFAULT_RX_FEATURE      FEATURE_RX_SPI
 #define RX_SPI_DEFAULT_PROTOCOL RX_SPI_FRSKY_X
 #define USE_RX_FRSKY_SPI_TELEMETRY
+#define USE_RX_EXPRESSLRS
+#if !defined(STM32F745)
+#endif
+#elif defined(CRAZYBEEF4SX1280)
+#define USE_LED_STRIP
+#define USE_RX_SPI
+#define RX_SPI_INSTANCE         SPI3
+
+#define RX_CC2500_SPI_DISABLE_CHIP_DETECTION
+#define RX_CC2500_SPI_GDO_0_PIN     PC14
+#define RX_CC2500_SPI_LED_PIN       PB9
+
+#define BINDPLUG_PIN             PB2
+
+#define USE_RX_FRSKY_SPI_D
+#define USE_RX_FRSKY_SPI_X
+#define DEFAULT_RX_FEATURE      FEATURE_RX_SPI
+#define RX_SPI_DEFAULT_PROTOCOL RX_SPI_FRSKY_X
+#define USE_RX_FRSKY_SPI_TELEMETRY
+#define USE_RX_EXPRESSLRS
+#define USE_RX_SX1280
+#if !defined(STM32F745)
+#define USE_RX_SX127X
+#endif
 #else
 #define USE_RX_SPI
 #define RX_SPI_INSTANCE         SPI3
@@ -149,6 +174,7 @@
 #define DEFAULT_RX_FEATURE      FEATURE_RX_SPI
 #define RX_SPI_DEFAULT_PROTOCOL RX_SPI_FRSKY_X
 #define USE_RX_FRSKY_SPI_TELEMETRY
+
 #endif
 // *************** UART *****************************
 #define USE_VCP

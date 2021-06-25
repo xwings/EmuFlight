@@ -22,6 +22,11 @@
 
 #include <stdint.h>
 
+#include "common/time.h"
+
+#include "drivers/exti.h"
+
+
 #define RX_SPI_MAX_PAYLOAD_SIZE 32
 
 struct rxSpiConfig_s;
@@ -33,3 +38,10 @@ uint8_t rxSpiWriteCommand(uint8_t command, uint8_t data);
 uint8_t rxSpiWriteCommandMulti(uint8_t command, const uint8_t *data, uint8_t length);
 uint8_t rxSpiReadCommand(uint8_t command, uint8_t commandData);
 uint8_t rxSpiReadCommandMulti(uint8_t command, uint8_t commandData, uint8_t *retData, uint8_t length);
+void rxSpiExtiInit(ioConfig_t rxSpiExtiPinConfig, extiTrigger_t rxSpiExtiPinTrigger);
+void rxSpiTransferCommandMulti(uint8_t *data, uint8_t length);
+bool rxSpiExtiConfigured(void);
+bool rxSpiGetExtiState(void);
+bool rxSpiPollExti(void);
+void rxSpiResetExti(void);
+timeUs_t rxSpiGetLastExtiTimeUs(void);

@@ -354,7 +354,19 @@ vtx_unittest_DEFINES := \
 		USE_VTX_CONTROL \
 		USE_VTX_SMARTAUDIO
 
-# Please tweak the following variable definitions as needed by your
+
+
+rx_spi_expresslrs_unittest_SRC := \
+        $(USER_DIR)/pg/rx_spi_expresslrs.c \
+		$(USER_DIR)/rx/expresslrs_common.c \
+		$(USER_DIR)/rx/expresslrs.c \
+
+rx_spi_expresslrs_unittest_DEFINES := \
+		USE_RX_SPI= \
+		USE_RX_EXPRESSLRS= \
+		USE_RX_SX1280= \
+		USE_RX_SX127X= \
+		
 # project, except GTEST_HEADERS, which you can use in your own targets
 # but shouldn't modify.
 

@@ -106,6 +106,8 @@ COMMON_SRC = \
             rx/sumh.c \
             rx/xbus.c \
             rx/fport.c \
+            rx/rx_bind.c \
+            rx/rx_spi_common.c \
             sensors/acceleration.c \
             sensors/boardalignment.c \
             sensors/compass.c \
@@ -315,7 +317,8 @@ SIZE_OPTIMISED_SRC := $(SIZE_OPTIMISED_SRC) \
             io/vtx_tramp.c \
             io/vtx_control.c \
             io/spektrum_vtx_control.c \
-            pg/pg.h
+            pg/pg.h \
+            rx/rx_bind.c
 
 # F4 and F7 optimizations
 ifneq ($(TARGET),$(filter $(TARGET),$(F3_TARGETS)))

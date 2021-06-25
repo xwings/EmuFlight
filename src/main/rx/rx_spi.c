@@ -31,12 +31,15 @@
 
 #include "config/feature.h"
 
+#include "drivers/io.h"
 #include "drivers/rx/rx_spi.h"
 #include "drivers/rx/rx_nrf24l01.h"
 
 #include "fc/config.h"
 
 #include "pg/rx_spi.h"
+
+#include "rx/rx_bind.h"
 
 #include "rx/rx_spi.h"
 #include "rx/cc2500_frsky_common.h"
@@ -48,6 +51,8 @@
 #include "rx/nrf24_kn.h"
 #include "rx/flysky.h"
 #include "rx/cc2500_sfhss.h"
+
+#include "rx/expresslrs.h"
 
 
 uint16_t rxSpiRcData[MAX_SUPPORTED_RC_CHANNEL_COUNT];
@@ -76,7 +81,6 @@ STATIC_UNIT_TESTED uint16_t rxSpiReadRawRC(const rxRuntimeConfig_t *rxRuntimeCon
 
 STATIC_UNIT_TESTED bool rxSpiSetProtocol(rx_spi_protocol_e protocol) {
     switch (protocol) {
-    default:
 #ifdef USE_RX_V202
     case RX_SPI_NRF24_V202_250K:
     case RX_SPI_NRF24_V202_1M:
@@ -149,7 +153,17 @@ STATIC_UNIT_TESTED bool rxSpiSetProtocol(rx_spi_protocol_e protocol) {
         protocolSetRcDataFromPayload = sfhssSpiSetRcData;
         break;
 #endif
+#ifdef USE_RX_EXPRESSLRS
+    case RX_SPI_EXPRESSLRS:
+        protocolInit = expressLrsSpiInit;
+        protocolDataReceived = expressLrsDataReceived;
+        protocolSetRcDataFromPayload = expressLrsSetRcDataFromPayload;
+        break;
+#endif        
+    default:
+        return false;
     }
+
     return true;
 }
 
@@ -175,9 +189,23 @@ bool rxSpiInit(const rxSpiConfig_t *rxSpiConfig, rxRuntimeConfig_t *rxRuntimeCon
     if (!rxSpiDeviceInit(rxSpiConfig)) {
         return false;
     }
+
+    rxSpiExtiConfig_t extiConfig = {
+        .ioConfig = IOCFG_IN_FLOATING,
+        .trigger = BETAFLIGHT_EXTI_TRIGGER_RISING,
+    };
+
     if (rxSpiSetProtocol(rxSpiConfig->rx_spi_protocol)) {
         ret = protocolInit(rxSpiConfig, rxRuntimeConfig);
     }
+
+
+    if (rxSpiExtiConfigured()) {
+        rxSpiExtiInit(extiConfig.ioConfig, extiConfig.trigger);
+
+        rxRuntimeConfig->rcFrameTimeUsFn = rxSpiGetLastExtiTimeUs;
+    }
+    
     rxSpiNewPacketAvailable = false;
     rxRuntimeConfig->rxRefreshRate = 20000;
     rxRuntimeConfig->rcReadRawFn = rxSpiReadRawRC;

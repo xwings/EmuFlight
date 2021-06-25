@@ -157,6 +157,12 @@ void spiResetErrorCounter(SPI_TypeDef *instance) {
     }
 }
 
+bool spiBusRawTransfer(const busDevice_t *bus, const uint8_t *txData, uint8_t *rxData, int len)
+{
+    return spiTransfer(bus->busdev_u.spi.instance, txData, rxData, len);
+}
+
+
 FAST_CODE bool spiBusWriteRegister(const busDevice_t *bus, uint8_t reg, uint8_t data) {
 #ifdef USE_DMA_SPI_DEVICE
     if(USE_DMA_SPI_DEVICE == bus->busdev_u.spi.instance) {
