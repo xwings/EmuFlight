@@ -2387,36 +2387,26 @@ static void cliBeeper(char *cmdline) {
 }
 #endif
 
-// #ifdef USE_RX_SPI
-// void cliRxBind(char *cmdline) {
-//     UNUSED(cmdline);
-//     switch (rxSpiConfig()->rx_spi_protocol) {
-// #ifdef USE_RX_CC2500_BIND
-//     case RX_SPI_FRSKY_D:
-//     case RX_SPI_FRSKY_X:
-//     case RX_SPI_SFHSS:
-//         cc2500SpiBind();
-//         cliPrint("Binding...");
-//         break;
-// #endif
-//     default:
-//         cliPrint("Not supported.");
-//         break;
-//     }
-// }
-// #endif
-
-#if defined(USE_RX_BIND)
-static void cliRxBind(const char *cmdName, char *cmdline)
-{
-    UNUSED(cmdline);
-    if (!startRxBind()) {
-        cliPrintErrorLinef(cmdName, "Not supported.");
-    } else {
-        cliPrintLinef("Binding...");
+void cliRxBind(char *cmdline) {
+    UNUSED(cmdline);     
+    switch (rxSpiConfig()->rx_spi_protocol) {
+#ifdef USE_RX_EXPRESSLRS
+    case RX_SPI_EXPRESSLRS:
+    startRxBind();
+    break;
+#endif       
+#ifdef USE_RX_CC2500_BIND
+    case RX_SPI_FRSKY_D:
+    case RX_SPI_FRSKY_X:
+    case RX_SPI_SFHSS:
+        cc2500SpiBind();
+        break;
+#endif
+    default:
+        cliPrint("Not supported.\r\n");
+        break;
     }
 }
-#endif
 
 static void printMap(uint8_t dumpMask, const rxConfig_t *rxConfig, const rxConfig_t *defaultRxConfig) {
     bool equalsDefault = true;
@@ -4331,9 +4321,6 @@ const clicmd_t cmdTable[] = {
 #if defined(USE_BOARD_INFO)
     CLI_COMMAND_DEF("board_name", "get / set the name of the board model", "[board name]", cliBoardName),
 #endif
-#if defined(USE_RX_BIND)
-    CLI_COMMAND_DEF("bind_rx", "initiate binding for RX SPI or SRXL2", NULL, cliRxBind),
-#endif
 #ifdef USE_LED_STRIP
     CLI_COMMAND_DEF("color", "configure colors", NULL, cliColor),
 #endif
@@ -4370,9 +4357,9 @@ const clicmd_t cmdTable[] = {
     CLI_COMMAND_DEF("flash_write", NULL, "<address> <message>", cliFlashWrite),
 #endif
 #endif
-// #ifdef USE_RX_CC2500_BIND
-//     CLI_COMMAND_DEF("bind", "initiate binding for RX", NULL, cliRxBind),
-// #endif
+#if defined (USE_RX_CC2500_BIND) || defined (USE_RX_BIND)
+    CLI_COMMAND_DEF("bind_rx", "initiate binding for RX", NULL, cliRxBind),
+#endif
     CLI_COMMAND_DEF("get", "get variable value", "[name]", cliGet),
 
 #ifdef USE_PEGASUS_UI

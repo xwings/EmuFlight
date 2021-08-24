@@ -83,8 +83,38 @@
 
 #define SERIAL_PORT_COUNT       4 // VCP, USART1, USART2, USART6
 
-#define DEFAULT_RX_FEATURE      FEATURE_RX_SERIAL
+// #define DEFAULT_RX_FEATURE      FEATURE_RX_SERIAL
 #define SERIALRX_PROVIDER       SERIALRX_SBUS
+
+//XWINGSLRS
+#define USE_SPI_DEVICE_3
+#define SPI3_SCK_PIN            PC10
+#define SPI3_MISO_PIN           PC11
+#define SPI3_MOSI_PIN           PC12
+#define SPI3_NSS_PIN            PA14
+
+#define RX_SCK_PIN              SPI3_SCK_PIN
+#define RX_MISO_PIN             SPI3_MISO_PIN
+#define RX_MOSI_PIN             SPI3_MOSI_PIN
+#define RX_NSS_PIN              SPI3_NSS_PIN
+
+#define RX_NSS_GPIO_CLK_PERIPHERAL   RCC_APB2Periph_GPIOA
+
+#define USE_LED_STRIP
+#define USE_RX_SPI
+#define USE_RX_BIND
+#define RX_SPI_INSTANCE         SPI3
+
+#define RX_CHANNELS_AETR
+#define DEFAULT_RX_FEATURE      FEATURE_RX_SPI
+#define RX_SPI_DEFAULT_PROTOCOL  RX_SPI_EXPRESSLRS
+
+#define USE_RX_FRSKY_SPI_TELEMETRY
+#define USE_RX_EXPRESSLRS_SPI
+#define USE_RX_SX1280
+#if !defined(STM32F745)
+#define USE_RX_SX127X
+#endif
 
 // ADC
 #define USE_ADC

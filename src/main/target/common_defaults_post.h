@@ -267,8 +267,8 @@
 #define RX_SPI_EXTI_PIN NONE
 #endif
 
-#if !defined(RX_SPI_BIND_PIN)
-#define RX_SPI_BIND_PIN NONE
+#if !defined(BINDPLUG_PIN)
+#define BINDPLUG_PIN NONE
 #endif
 
 #if defined(USE_RX_CC2500)

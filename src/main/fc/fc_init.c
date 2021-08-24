@@ -428,7 +428,8 @@ void init(void) {
     // The FrSky D SPI RX sends RSSI_ADC_PIN (if configured) as A2
     adcConfigMutable()->rssi.enabled = feature(FEATURE_RSSI_ADC);
 #ifdef USE_RX_SPI
-    adcConfigMutable()->rssi.enabled |= (feature(FEATURE_RX_SPI) && rxSpiConfig()->rx_spi_protocol == RX_SPI_FRSKY_D);
+    //adcConfigMutable()->rssi.enabled |= (feature(FEATURE_RX_SPI) && rxSpiConfig()->rx_spi_protocol == RX_SPI_FRSKY_D);
+    adcConfigMutable()->rssi.enabled |= (feature(FEATURE_RX_SPI) && rxSpiConfig()->rx_spi_protocol == RX_SPI_EXPRESSLRS);
 #endif
     adcInit(adcConfig());
 #endif

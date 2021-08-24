@@ -20,7 +20,7 @@
 
 #include "platform.h"
 
-#if defined(USE_RX_BIND)
+#if defined USE_RX_BIND
 
 #include "rx/rx_spi_common.h"
 #include "rx/srxl2.h"
@@ -56,12 +56,12 @@ static bool doRxBind(bool doBind)
 #if defined(USE_RX_FRSKY_SPI_D)
         case RX_SPI_FRSKY_D:
 #endif
-#if defined(USE_RX_FRSKY_SPI_X)
-        case RX_SPI_FRSKY_X:
-        case RX_SPI_FRSKY_X_LBT:
-        case RX_SPI_FRSKY_X_V2:
-        case RX_SPI_FRSKY_X_LBT_V2:
-#endif
+// #if defined(USE_RX_FRSKY_SPI_X)
+//         case RX_SPI_FRSKY_X:
+//         case RX_SPI_FRSKY_X_LBT:
+//         case RX_SPI_FRSKY_X_V2:
+//         case RX_SPI_FRSKY_X_LBT_V2:
+// #endif
 #if defined(USE_RX_REDPINE_SPI)
         case RX_SPI_REDPINE:
 #endif

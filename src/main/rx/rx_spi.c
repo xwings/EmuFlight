@@ -59,7 +59,12 @@ uint16_t rxSpiRcData[MAX_SUPPORTED_RC_CHANNEL_COUNT];
 STATIC_UNIT_TESTED uint8_t rxSpiPayload[RX_SPI_MAX_PAYLOAD_SIZE];
 STATIC_UNIT_TESTED uint8_t rxSpiNewPacketAvailable; // set true when a new packet is received
 
-typedef bool (*protocolInitFnPtr)(const rxSpiConfig_t *rxSpiConfig, rxRuntimeConfig_t *rxRuntimeConfig);
+#ifdef USE_RX_EXPRESSLRS
+    typedef bool (*protocolInitFnPtr)(const rxSpiConfig_t *rxSpiConfig, rxRuntimeConfig_t *rxRuntimeConfig, rxSpiExtiConfig_t *extiConfig);
+#else
+    typedef bool (*protocolInitFnPtr)(const rxSpiConfig_t *rxSpiConfig, rxRuntimeConfig_t *rxRuntimeConfig);
+#endif
+
 typedef rx_spi_received_e (*protocolDataReceivedFnPtr)(uint8_t *payload);
 typedef void (*protocolSetRcDataFromPayloadFnPtr)(uint16_t *rcData, const uint8_t *payload);
 
@@ -153,7 +158,7 @@ STATIC_UNIT_TESTED bool rxSpiSetProtocol(rx_spi_protocol_e protocol) {
         protocolSetRcDataFromPayload = sfhssSpiSetRcData;
         break;
 #endif
-#ifdef USE_RX_EXPRESSLRS
+#ifdef USE_RX_EXPRESSLRS_SPI
     case RX_SPI_EXPRESSLRS:
         protocolInit = expressLrsSpiInit;
         protocolDataReceived = expressLrsDataReceived;
@@ -195,10 +200,15 @@ bool rxSpiInit(const rxSpiConfig_t *rxSpiConfig, rxRuntimeConfig_t *rxRuntimeCon
         .trigger = BETAFLIGHT_EXTI_TRIGGER_RISING,
     };
 
+#ifdef USE_RX_EXPRESSLRS
+    if (rxSpiSetProtocol(rxSpiConfig->rx_spi_protocol)) {
+        ret = protocolInit(rxSpiConfig, rxRuntimeConfig, &extiConfig);
+    }
+#else
     if (rxSpiSetProtocol(rxSpiConfig->rx_spi_protocol)) {
         ret = protocolInit(rxSpiConfig, rxRuntimeConfig);
     }
-
+#endif    
 
     if (rxSpiExtiConfigured()) {
         rxSpiExtiInit(extiConfig.ioConfig, extiConfig.trigger);
