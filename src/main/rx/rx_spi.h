@@ -43,6 +43,7 @@ typedef enum {
     RX_SPI_NRF24_KN,
     RX_SPI_SFHSS,
     RX_SPI_EXPRESSLRS,
+    RX_SPI_REDPINE,
     RX_SPI_PROTOCOL_COUNT
 } rx_spi_protocol_e;
 
